@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.util.Random;
+import java.util.Scanner;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
@@ -7,6 +8,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 
 public class Main {
+    
 
     public static void main(String[] args) {
         //Parameters for the simulation
@@ -18,11 +20,39 @@ public class Main {
         World w = p.getWorld();
         //Add a rabbit to the world
         w.setTile(new Location(0,0), new Rabbit());
-       DisplayInformation di = new DisplayInformation(Color.red, "rabbit-small");
-        DisplayInformation di2 = new DisplayInformation(Color.black, "hole");
-       p.setDisplayInformation(Rabbit.class, di);
-       p.setDisplayInformation(Hole.class, di2);
-      
+       Scanner scanner = new Scanner(System.in);
+    int amountOfRabbits = scanner.nextInt();
+    int amountOfHoles = scanner.nextInt();
+      Random r = new Random();
+
+      for(int i = 0; i < amountOfRabbits; i++){
+        if(amountOfRabbits>size *size){
+            throw new IllegalArgumentException("Too many rabbits for this size");
+        }
+            int x = r.nextInt(size);
+            int y = r.nextInt(size);
+            Location l = new Location(x,y);
+            while(!w.isTileEmpty(l)){
+                x = r.nextInt(size);
+                y=r.nextInt(size);
+                l = new Location(x,y);
+            }
+            w.setTile(l, new Rabbit());
+      } 
+      for(int i = 0; i < amountOfHoles; i++){
+        if(amountOfHoles>size *size){
+            throw new IllegalArgumentException("Too many holes for this size");
+        }
+            int x = r.nextInt(size);
+            int y = r.nextInt(size);
+            Location l = new Location(x,y);
+            while(!w.isTileEmpty(l)){
+                x = r.nextInt(size);
+                y=r.nextInt(size);
+                l = new Location(x,y);
+            }
+            w.setTile(l, new Hole(null));
+      } 
        
          
         p.show();
