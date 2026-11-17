@@ -20,15 +20,15 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
     public void act(World world) {
         age++;
 
-        if (age > 50) {          // rabbit dies of old age
+        if (age > 50) {          
             world.delete(this);
-            return;              // stop here, the rabbit is gone
+            return;              
         }
 
         dig(world);
         // flee(world);
         move(world);
-        flee(world);
+       // flee(world);
     }
 
     void dig(World world) {
@@ -75,6 +75,8 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
 }
 void breed(){
     //If the world contains >2 rabbits, there is a chance that they breed a new rabbit
+    //Might have 2 put in Main, because this determines what the individual rabbits do
+    //And you need 2 or more rabbits to breed
 }
 public DisplayInformation getInformation(){
             return new DisplayInformation(Color.white, "rabbit-small");
