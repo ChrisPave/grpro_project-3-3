@@ -2,6 +2,9 @@ import java.awt.Color;
 import java.util.Random;
 import java.util.Scanner;
 
+import Entities.Grass;
+import Entities.Hole;
+import Entities.Rabbit;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.Location;
@@ -19,7 +22,7 @@ public class Main {
 
         World w = p.getWorld();
         //Add a rabbit to the world
-        w.setTile(new Location(0,0), new Rabbit());
+       
        Scanner scanner = new Scanner(System.in);
        //Choose how many Rabbits and Holes the simulation starts with
     int amountOfRabbits = scanner.nextInt();

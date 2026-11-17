@@ -1,3 +1,4 @@
+package Entities;
 import java.awt.Color;
 
 import itumulator.executable.DisplayInformation;
