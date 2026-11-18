@@ -90,7 +90,7 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
         return myHole;
     }
 
-
+//Rabbits seek towards thir hole at nighttime
     void flee(World world) {
         if(world.isNight()==true){
         if(getHole() != null){
@@ -106,15 +106,16 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
        }
        
        
-   
+    //Makes a rabbit move to a random empty surrounding tile.
     void move(World world) {
-        //Makes a rabbit move to a random empty surrounding tile.
+       
     Set<Location> free = world.getEmptySurroundingTiles(world.getLocation(this));
     if (free.isEmpty()) return;                    // nowhere to go
     List<Location> options = new ArrayList<>(free);
     Location next = options.get(new Random().nextInt(options.size()));
     world.move(this, next);
 }
+//Rabbit breeds with another rabbit, and another rabbit gets placed
 void breed(World world){
     if(world.isDay()==true && age > 15){
     if (!world.isOnTile(this)) return;                 // rabbit is hiding/removed
@@ -135,7 +136,7 @@ void breed(World world){
 }
     
 
-//Kanin spiser gras
+//Rabbits may eat grass, if they are standing on it. Hunger resets after eating
 void eatGrass(World world){
    if(new Random().nextInt(100) < 40){
    Location current = world.getLocation(this);
@@ -146,6 +147,7 @@ if (below instanceof Grass) {
        }
     }    
 }
+//If rabbits go 16 ticks wihtout eating grass, they die
 void starve(World world){ //
     {
         if(hunger > 16){

@@ -11,7 +11,7 @@ import itumulator.world.World;
         for (int x = 0; x < size; x++) {
             for (int y = 0; y < size; y++) {
                 Location l = new Location(x, y);
-                if (!world.isTileEmpty(l)) {
+                if (world.isTileEmpty(l)) {
                     free.add(l);
                 }
             }

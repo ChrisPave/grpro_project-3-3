@@ -1,8 +1,10 @@
 import java.awt.Color;
+import java.io.FileNotFoundException;
 import java.util.Random;
 import java.util.Scanner;
 import helpers.FreeNonBlockingTiles;
 import helpers.FreeBlockingTiles;
+import helpers.ScannerTest;
 import Entities.Grass;
 import Entities.Hole;
 import Entities.Rabbit;
@@ -14,12 +16,13 @@ import itumulator.world.World;
 public class Main {
     //Remember to test the code b4 handing in assignment!!!!
 
-    public static void main(String[] args) {
-    Scanner scanner = new Scanner(System.in);
-    int size = scanner.nextInt();
-    int amountOfRabbits = scanner.nextInt();
-    int amountOfHoles = scanner.nextInt();
-    int amountOfGrass = scanner.nextInt();
+    public static void main(String[] args)throws FileNotFoundException {
+   
+    ScannerTest input = new ScannerTest("data/tf1-1.txt");
+    int size = input.size();
+    int amountOfRabbits = input.amountOf("rabbit");
+    int amountOfHoles   = input.amountOf("burrow");
+    int amountOfGrass   = input.amountOf("grass");
         //Parameters for the simulation
         
         
