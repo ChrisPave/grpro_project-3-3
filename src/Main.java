@@ -1,7 +1,8 @@
 import java.awt.Color;
 import java.util.Random;
 import java.util.Scanner;
-
+import helpers.FreeNonBlockingTiles;
+import helpers.FreeBlockingTiles;
 import Entities.Grass;
 import Entities.Hole;
 import Entities.Rabbit;
@@ -14,8 +15,14 @@ public class Main {
     //Remember to test the code b4 handing in assignment!!!!
 
     public static void main(String[] args) {
+    Scanner scanner = new Scanner(System.in);
+    int size = scanner.nextInt();
+    int amountOfRabbits = scanner.nextInt();
+    int amountOfHoles = scanner.nextInt();
+    int amountOfGrass = scanner.nextInt();
         //Parameters for the simulation
-        int size = 5;
+        
+        
         int delay = 1000;
         int display_size = 800;
         Program p = new Program(size, delay, display_size);
@@ -23,64 +30,45 @@ public class Main {
         World w = p.getWorld();
         //Add a rabbit to the world
        
-       Scanner scanner = new Scanner(System.in);
+      
        //Choose how many Rabbits and Holes the simulation starts with
-    int amountOfRabbits = scanner.nextInt();
-    int amountOfHoles = scanner.nextInt();
-    int amountOfGrass = scanner.nextInt();
-      Random r = new Random();
+    
+      
 //Places the rabbits from the scanner in the simulation @Random
       for(int i = 0; i < amountOfRabbits; i++){
         if(amountOfRabbits>size *size){
             throw new IllegalArgumentException("Too many rabbits for this size");
         }
-            int x = r.nextInt(size);
-            int y = r.nextInt(size);
-            Location l = new Location(x,y);
-            while(!w.isTileEmpty(l)){
-                x = r.nextInt(size);
-                y=r.nextInt(size);
-                l = new Location(x,y);
+            Location l = FreeBlockingTiles.randomBlockingTile(w);
+            if(l!=null){
+                w.setTile(l, new Rabbit());
             }
-            w.setTile(l, new Rabbit());
-      } 
+            }
+            
       //Places the holes from the scanner in the simulation @Random
       for(int i = 0; i < amountOfHoles; i++){
         if(amountOfHoles>size *size){
             throw new IllegalArgumentException("Too many holes for this size");
         }
-            int x = r.nextInt(size);
-            int y = r.nextInt(size);
-            Location l = new Location(x,y);
-            while(!w.isTileEmpty(l)){
-                x = r.nextInt(size);
-                y=r.nextInt(size);
-                l = new Location(x,y);
-            }
-            if(!w.containsNonBlocking(l)){
+             Location l = FreeNonBlockingTiles.randomNonBlockingTile(w);
+            if(l!=null){
                 w.setTile(l, new Hole(null));
             }
-            //w.setTile(l, new Hole(null));
+            
       } 
-      for(int i = 0; i < amountOfHoles; i++){
+      //Places amount of 
+      for(int i = 0; i < amountOfGrass; i++){
         if(amountOfGrass>size *size){
             throw new IllegalArgumentException("Too much grass for this size");
         }
-            int x = r.nextInt(size);
-            int y = r.nextInt(size);
-            Location l = new Location(x,y);
-            while(!w.isTileEmpty(l)){
-                x = r.nextInt(size);
-                y=r.nextInt(size);
-                l = new Location(x,y);
-            }
-            if(!w.containsNonBlocking(l)){
+            Location l = FreeNonBlockingTiles.randomNonBlockingTile(w);
+            if(l!=null){
                 w.setTile(l, new Grass());
             }
            
       } 
     
-       //Do the same thing for grass here
+      
          
         p.show();
         //Simulate for 200 steps

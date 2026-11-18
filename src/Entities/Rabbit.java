@@ -21,19 +21,21 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
     @Override
     public void act(World world) {
         age++;
-        hunger++;
+        
         dig(world);
         breed(world);
         // flee(world);
        // flee(world);
        eatGrass(world);
-        //starve(world);
+        starve(world);
         moveAccordingToAge(world);
     }
     //Rabbits have a higher chance of moving, if they are young
     //Rabbits only move during day-time
+    //Rabbits only get hungry during day time
     void moveAccordingToAge(World world){
         if(world.isDay()==true){
+            hunger++;
             Object o = Rabbit.this;
         if(!world.contains(o)){
             return; // Rabbit has been removed from the world, so stop acting
@@ -114,6 +116,7 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
     world.move(this, next);
 }
 void breed(World world){
+    if(world.isDay()==true && age > 15){
     if (!world.isOnTile(this)) return;                 // rabbit is hiding/removed
     Location current = world.getLocation(this);
 
@@ -121,13 +124,14 @@ void breed(World world){
     Set<Rabbit> neighbours = world.getAll(Rabbit.class, world.getSurroundingTiles(current));
     if (neighbours.isEmpty()) return;                  // no partner nearby
 
-    if (new Random().nextInt(100) < 10) {              // 20% chance to breed
+    if (new Random().nextInt(100) < 5) {              // 5% chance to breed
         Set<Location> free = world.getEmptySurroundingTiles(current);
         if (free.isEmpty()) return;                    // no room for a baby
         List<Location> options = new ArrayList<>(free);
         Location next = options.get(new Random().nextInt(options.size()));
         world.setTile(next, new Rabbit());
     }
+}
 }
     
 
