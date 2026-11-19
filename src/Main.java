@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.Scanner;
 import helpers.FreeNonBlockingTiles;
 import helpers.FreeBlockingTiles;
-import helpers.ScannerTest;
+import helpers.ScannerHelper;
 import Entities.Grass;
 import Entities.Hole;
 import Entities.Rabbit;
@@ -17,8 +17,9 @@ public class Main {
     //Remember to test the code b4 handing in assignment!!!!
 
     public static void main(String[] args)throws FileNotFoundException {
-   
-    ScannerTest input = new ScannerTest("data/tf1-1.txt");
+   //Uses the ScannerHelper helper class, to read the files, and insert
+   //The right amount of enteties, and set the world size
+    ScannerHelper input = new ScannerHelper("data/tf1-1.txt");
     int size = input.size();
     int amountOfRabbits = input.amountOf("rabbit");
     int amountOfHoles   = input.amountOf("burrow");
