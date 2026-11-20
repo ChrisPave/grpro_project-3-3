@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
+import helpers.MoveTowardsTarget;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.simulator.Actor;
@@ -21,14 +21,29 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
     @Override
     public void act(World world) {
         age++;
-        
+        //Rabbits move differently according to time of day
+        //When the day starts, they reappear from their holes, if hidden, or move, if not
+        //If it is close to night, they seek towards their holes
+        //Rabbits don't move at night
+        if(world.getCurrentTime() == 0){
+            if(world.isOnTile(this)){
+                moveAccordingToAge(world);
+            } else{
+                //reappear(world);
+            }
+            
+        } else if(world.getCurrentTime() > 0 && world.getCurrentTime() <= 5){
+           moveAccordingToAge(world);
+        } else if(world.getCurrentTime() > 5 && world.getCurrentTime() <= 9){
+            flee(world);
+        } else {
+            return;
+        }
         dig(world);
         breed(world);
-        // flee(world);
-       // flee(world);
        eatGrass(world);
         starve(world);
-        moveAccordingToAge(world);
+        
     }
     //Rabbits have a higher chance of moving, if they are young
     //Rabbits only move during day-time
@@ -74,7 +89,7 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
 
     void dig(World world) {
         // Rabbit digs a hole
-        if(age > 10 && new Random().nextInt(100) < 5) { // 5% chance to dig a hole
+        if(new Random().nextInt(100) < 5) { // 5% chance to dig a hole
             Location loc = world.getLocation(this);
             if(world.containsNonBlocking(loc)) {
                return; // Can't dig a hole if there's already a non-blocking object
@@ -92,18 +107,49 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
 
 //Rabbits seek towards thir hole at nighttime
     void flee(World world) {
-        if(world.isNight()==true){
-        if(getHole() != null){
-            world.getLocation(myHole);
-            world.move(this, world.getLocation(myHole));
-            world.remove(this);
-        } else{
-            //Find closest hole
-        }
-    }//If time is day reappear
+        if(myHole!=null){
+            //If rabbits DO have a hole
+             MoveTowardsTarget.moveTowardsTarget(world, this, myHole);
+             Location current = world.getLocation(this);
+             Location holeLocation = world.getLocation(myHole);
+             if(current.equals(holeLocation)){
+                 world.remove(this);
+             }
+            
     
+        } else{
+            //If rabbits DO NOT have a hole
+            //They find the nearest hole, and claim it as theirs
+           Location current = world.getLocation(this);
+           Hole nearest = null;
+           int best = Integer.MAX_VALUE;
+           for(Location loc : world.getSurroundingTiles(current, 4)){
+            Object o = world.getTile(loc);
+            if(o instanceof Hole){
+               int d = Math.max(Math.abs(loc.getX() - current.getX()),
+                             Math.abs(loc.getY() - current.getY()));
+            if (d < best) {
+                best = d; 
+                nearest = (Hole) o;
+            }
+            
+           }
+            
+        }
+        myHole = nearest;
+        if(myHole == null){
+            return;
+        }
+        MoveTowardsTarget.moveTowardsTarget(world, this, myHole);
+          Location currentLocation = world.getLocation(this);
+             Location currentHoleLocation = world.getLocation(myHole);
+             if(currentLocation.equals(currentHoleLocation)){
+                 world.remove(this);
+             }
+       
        
        }
+    }
        
        
     //Makes a rabbit move to a random empty surrounding tile.
@@ -118,7 +164,7 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
 //Rabbit breeds with another rabbit, and another rabbit gets placed
 void breed(World world){
     if(world.isDay()==true && age > 15){
-    if (!world.isOnTile(this)) return;                 // rabbit is hiding/removed
+    if (!world.isOnTile(this)) return;                
     Location current = world.getLocation(this);
 
     // find rabbits on the tiles around this rabbit
@@ -147,12 +193,24 @@ if (below instanceof Grass) {
        }
     }    
 }
-//If rabbits go 16 ticks wihtout eating grass, they die
+//If rabbits go 16 daylight hours wihtout eating grass, they die
 void starve(World world){ //
     {
         if(hunger > 16){
             world.delete(this);
         }
+    }
+}
+//Rabbits reappear on the map
+//If another blocking object is on the tile, they can't get out, and sufficate:(
+void reappear(World world){
+    if(!world.isOnTile(this)){
+        Location holeLocation = world.getLocation(myHole);
+        if(world.isTileEmpty(holeLocation)==true){
+            world.setTile(holeLocation, this);
+        }
+    } else {
+        world.delete(this);
     }
 }
 
