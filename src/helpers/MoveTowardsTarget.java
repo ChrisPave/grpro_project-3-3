@@ -27,7 +27,7 @@ public class MoveTowardsTarget {
                     int xDistanceToTarget = Math.abs(tile.getX() - targetLocation.getX());
                     int yDistanceToTarget = Math.abs(tile.getY() - targetLocation.getY());
                     int distanceToTarget = Math.max(xDistanceToTarget, yDistanceToTarget);
-                    if(distanceToTarget < distance){
+                    if(distanceToTarget < distance && world.isTileEmpty(tile)){
                         world.move(mover, tile);
                         break;
                     }

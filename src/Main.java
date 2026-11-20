@@ -32,10 +32,7 @@ public class Main {
         Program p = new Program(size, delay, display_size);
 
         World w = p.getWorld();
-        //Add a rabbit to the world
        
-      
-       //Choose how many Rabbits and Holes the simulation starts with
     
       
 //Places the rabbits from the scanner in the simulation @Random

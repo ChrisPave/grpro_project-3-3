@@ -20,29 +20,41 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
    
     @Override
     public void act(World world) {
-        age++;
+        
+        
         //Rabbits move differently according to time of day
         //When the day starts, they reappear from their holes, if hidden, or move, if not
         //If it is close to night, they seek towards their holes
         //Rabbits don't move at night
         if(world.getCurrentTime() == 0){
+            
             if(world.isOnTile(this)){
+                
                 moveAccordingToAge(world);
             } else{
-                //reappear(world);
+                
+                reappear(world);
             }
-            
         } else if(world.getCurrentTime() > 0 && world.getCurrentTime() <= 5){
+           
            moveAccordingToAge(world);
+           
         } else if(world.getCurrentTime() > 5 && world.getCurrentTime() <= 9){
+            age++;
             flee(world);
+        } else if(!world.isDay() && myHole!=null && world.isOnTile(this) && world.getLocation(this).equals(world.getLocation(myHole))){
+            remove(world);
+        }
+        if(world.isDay()){
+            hunger++;
+            eatGrass(world);
+            dig(world);
+            breed(world);
+            starve(world);
         } else {
             return;
         }
-        dig(world);
-        breed(world);
-       eatGrass(world);
-        starve(world);
+        
         
     }
     //Rabbits have a higher chance of moving, if they are young
@@ -112,7 +124,7 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
              MoveTowardsTarget.moveTowardsTarget(world, this, myHole);
              Location current = world.getLocation(this);
              Location holeLocation = world.getLocation(myHole);
-             if(current.equals(holeLocation)){
+             if(current.equals(holeLocation)&&world.isNight()){
                  world.remove(this);
              }
             
@@ -143,7 +155,7 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
         MoveTowardsTarget.moveTowardsTarget(world, this, myHole);
           Location currentLocation = world.getLocation(this);
              Location currentHoleLocation = world.getLocation(myHole);
-             if(currentLocation.equals(currentHoleLocation)){
+             if(currentLocation.equals(currentHoleLocation)&&world.isNight()){
                  world.remove(this);
              }
        
@@ -211,6 +223,11 @@ void reappear(World world){
         }
     } else {
         world.delete(this);
+    }
+}
+void remove(World world){
+    if(world.isOnTile(this)){
+        world.remove(this);
     }
 }
 
