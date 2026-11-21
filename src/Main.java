@@ -8,6 +8,8 @@ import helpers.ScannerHelper;
 import Entities.Grass;
 import Entities.Hole;
 import Entities.Rabbit;
+import Entities.Wolf;
+import Entities.Pack;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.Location;
@@ -22,6 +24,7 @@ public class Main {
     ScannerHelper input = new ScannerHelper("data/tf1-1.txt");
     int size = input.size();
     int amountOfRabbits = input.amountOf("rabbit");
+    int amountOfWolfs   = input.amountOf("wolf");
     int amountOfHoles   = input.amountOf("burrow");
     int amountOfGrass   = input.amountOf("grass");
         //Parameters for the simulation
@@ -45,7 +48,24 @@ public class Main {
                 w.setTile(l, new Rabbit());
             }
             }
-            
+        //Places the wolfs from the scanner in the simulation @Random
+        Pack pack = new Pack(); // Create a new pack for the wolves
+    for(int i = 0; i < amountOfWolfs; i++){
+        if(amountOfWolfs>size *size){
+            throw new IllegalArgumentException("Too many wolfs for this size");
+        }
+            Location l = FreeBlockingTiles.randomBlockingTile(w);
+            if(l!=null){
+                w.setTile(l, new Wolf(pack));
+            }
+            }
+
+
+
+
+
+
+
       //Places the holes from the scanner in the simulation @Random
       for(int i = 0; i < amountOfHoles; i++){
         if(amountOfHoles>size *size){
