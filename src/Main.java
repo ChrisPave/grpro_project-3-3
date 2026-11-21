@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Random;
 import java.util.Scanner;
 import helpers.FreeNonBlockingTiles;
@@ -12,6 +13,8 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
+import Entities.Bear;
+import Entities.BerryBush;
 
 public class Main {
     //Remember to test the code b4 handing in assignment!!!!
@@ -19,11 +22,14 @@ public class Main {
     public static void main(String[] args)throws FileNotFoundException {
    //Uses the ScannerHelper helper class, to read the files, and insert
    //The right amount of enteties, and set the world size
-    ScannerHelper input = new ScannerHelper("data/tf1-1.txt");
+    ScannerHelper input = new ScannerHelper("data/tf2-2.txt");
     int size = input.size();
     int amountOfRabbits = input.amountOf("rabbit");
     int amountOfHoles   = input.amountOf("burrow");
     int amountOfGrass   = input.amountOf("grass");
+    int amountOfBears = input.amountOf("bear");
+    int amountOfBerryBushes = input.amountOf("berry");
+    ArrayList<Location> bearLocation = input.locationOf("bear");
         //Parameters for the simulation
         
         
@@ -36,6 +42,16 @@ public class Main {
     
       
 //Places the rabbits from the scanner in the simulation @Random
+for(int i = 0; i < amountOfBerryBushes; i++){
+    if(amountOfBerryBushes > size*size){
+        throw new IllegalArgumentException("Too many bushes for this size");
+    }
+    Location l = FreeBlockingTiles.randomBlockingTile(w);
+            if(l!=null){
+                w.setTile(l, new BerryBush());
+            }
+
+}
       for(int i = 0; i < amountOfRabbits; i++){
         if(amountOfRabbits>size *size){
             throw new IllegalArgumentException("Too many rabbits for this size");
@@ -45,6 +61,23 @@ public class Main {
                 w.setTile(l, new Rabbit());
             }
             }
+            //If a Bear isn't given a location from the file, it is placed randomly
+            //If a Bear IS given a location from the file, place it on said location
+            if(amountOfBears>0){
+                for(int i = 0; i < amountOfBears; i++){
+                if(amountOfBears>size*size){
+            throw new IllegalArgumentException("Too many bears for this size");
+                }
+                Location l = FreeBlockingTiles.randomBlockingTile(w);
+                w.setTile(l, new Bear());
+
+                
+            }
+            } else if(bearLocation != null){
+                for(Location l : bearLocation)
+                w.setTile(l, new Bear());
+            }
+            
             
       //Places the holes from the scanner in the simulation @Random
       for(int i = 0; i < amountOfHoles; i++){

@@ -1,4 +1,5 @@
 package Entities;
+import helpers.Spread;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
@@ -14,19 +15,18 @@ import java.awt.Color;
 
 
 public class Grass implements Actor, NonBlocking, DynamicDisplayInformationProvider{
+    
 public void act(World world) {
+    spread(world);
+    
+}
+void spread(World world){
     if (new Random().nextInt(100) >= 8) {
         return; // 8% chance that grass spreads
     } else{
-         Location current = world.getLocation(this);
-    for (Location tile : world.getEmptySurroundingTiles(current)) {
-        if (!world.containsNonBlocking(tile)) {
-            world.setTile(tile, new Grass());
-            return; // only spread to one tile
-        }
-    }
+      Spread.spread(world, this);
 }
-    
+     
 }
 
     
