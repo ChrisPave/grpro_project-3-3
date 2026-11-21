@@ -27,12 +27,15 @@ public class Wolf implements Actor, DynamicDisplayInformationProvider{
         energyDecay();
         wolfAge();
         wolfDies(world, world.getLocation(this));
-
+        
     }
+public void moveTowardsPack(World world, Location location) {
+            
+        }
+
     
+
  //Wolf eats rabbit(s)
-    
- 
     public void eatAnimals(World world, Location location) {
         Set<Location> adjacentLocations = world.getSurroundingTiles(location);
         for (Location adjacentLocation : adjacentLocations) {
@@ -61,6 +64,7 @@ public class Wolf implements Actor, DynamicDisplayInformationProvider{
                 pack.removeWolf(this);
             }
         }
+        
 
        
             

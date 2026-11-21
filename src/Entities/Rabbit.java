@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+import helpers.Move;
+import helpers.FreeNonBlockingTiles;
 import helpers.MoveTowardsTarget;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
@@ -27,30 +29,28 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
         //If it is close to night, they seek towards their holes
         //Rabbits don't move at night
         if(world.getCurrentTime() == 0){
-            
             if(world.isOnTile(this)){
-                
                 moveAccordingToAge(world);
             } else{
-                
                 reappear(world);
             }
         } else if(world.getCurrentTime() > 0 && world.getCurrentTime() <= 5){
-           
            moveAccordingToAge(world);
-           
         } else if(world.getCurrentTime() > 5 && world.getCurrentTime() <= 9){
-            age++;
             flee(world);
         } else if(!world.isDay() && myHole!=null && world.isOnTile(this) && world.getLocation(this).equals(world.getLocation(myHole))){
-            remove(world);
+            hide(world);
         }
         if(world.isDay()){
             hunger++;
+            age++;
             eatGrass(world);
             dig(world);
-            breed(world);
+            
             starve(world);
+            if(age>15){
+                breed(world);
+            }
         } else {
             return;
         }
@@ -62,7 +62,6 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
     //Rabbits only get hungry during day time
     void moveAccordingToAge(World world){
         if(world.isDay()==true){
-            hunger++;
             Object o = Rabbit.this;
         if(!world.contains(o)){
             return; // Rabbit has been removed from the world, so stop acting
@@ -166,16 +165,11 @@ public class Rabbit implements Actor, DynamicDisplayInformationProvider {
        
     //Makes a rabbit move to a random empty surrounding tile.
     void move(World world) {
-       
-    Set<Location> free = world.getEmptySurroundingTiles(world.getLocation(this));
-    if (free.isEmpty()) return;                    // nowhere to go
-    List<Location> options = new ArrayList<>(free);
-    Location next = options.get(new Random().nextInt(options.size()));
-    world.move(this, next);
+    Move.move(world, this);   
+    
 }
 //Rabbit breeds with another rabbit, and another rabbit gets placed
 void breed(World world){
-    if(world.isDay()==true && age > 15){
     if (!world.isOnTile(this)) return;                
     Location current = world.getLocation(this);
 
@@ -190,7 +184,7 @@ void breed(World world){
         Location next = options.get(new Random().nextInt(options.size()));
         world.setTile(next, new Rabbit());
     }
-}
+
 }
     
 
@@ -214,18 +208,29 @@ void starve(World world){ //
     }
 }
 //Rabbits reappear on the map
-//If another blocking object is on the tile, they can't get out, and sufficate:(
+//If another blocking object is on the tile, the rabbit tries to find an empty tile, and dig an exit there
+//The new hole becomes the rabbits hole
 void reappear(World world){
     if(!world.isOnTile(this)){
         Location holeLocation = world.getLocation(myHole);
         if(world.isTileEmpty(holeLocation)==true){
             world.setTile(holeLocation, this);
+        } else {
+              Location newHole = FreeNonBlockingTiles.randomNonBlockingTile(world);
+            while(world.isTileEmpty(newHole)==false){
+            newHole = FreeNonBlockingTiles.randomNonBlockingTile(world);
         }
-    } else {
-        world.delete(this);
+         myHole = new Hole(this);
+        world.setTile(newHole, myHole);
+        world.setTile(newHole, this);
+        
     }
 }
-void remove(World world){
+        }
+    
+        
+     
+void hide(World world){
     if(world.isOnTile(this)){
         world.remove(this);
     }
